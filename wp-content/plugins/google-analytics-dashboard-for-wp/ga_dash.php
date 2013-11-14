@@ -1,11 +1,11 @@
 <?php
 /* 
 Plugin Name: Google Analytics Dashboard for WP
-Plugin URI: http://www.deconf.com
+Plugin URI: http://deconf.com
 Description: This plugin will display Google Analytics data and statistics into Admin Dashboard. 
 Author: Alin Marcu
-Version: 4.2
-Author URI: http://www.deconf.com
+Version: 4.2.3
+Author URI: http://deconf.com
 */  
 
 $plugin = plugin_basename(__FILE__);
@@ -47,7 +47,7 @@ function ga_dash_setup() {
 	if (current_user_can(get_option('ga_dash_access'))) {
 		wp_add_dashboard_widget(
 			'ga-dash-widget',
-			__("Google Analytics Dashboard",'ga-dash'),
+			"<a href='http://deconf.com/google-analytics-dashboard-wordpress/' style='font-size:1em;text-decoration:none;'; target='_blank'>".__("Google Analytics Dashboard",'ga-dash')."</a>",
 			'ga_dash_content',
 			$control_callback = null
 		);
@@ -142,8 +142,8 @@ function ga_dash_front_content($content) {
 			return $content;
 		}		
 		
-		$from = date('Y-m-d', time()-30*24*60*60);
-		$to = date('Y-m-d');		
+		$from = '30daysAgo';
+		$to = 'today';		
 		$metrics = 'ga:pageviews,ga:uniquePageviews';
 		$dimensions = 'ga:year,ga:month,ga:day';
 		$page_url = $_SERVER["REQUEST_URI"];
@@ -432,20 +432,20 @@ function ga_dash_content() {
 		
 	switch ($period){
 
-		case 'today'	:	$from = date('Y-m-d'); 
-							$to = date('Y-m-d');
+		case 'today'	:	$from = 'today'; 
+							$to = 'today';
 							break;
 
-		case 'yesterday'	:	$from = date('Y-m-d', time()-24*60*60);
-								$to = date('Y-m-d', time()-24*60*60);
+		case 'yesterday'	:	$from = 'yesterday';
+								$to = 'yesterday';
 								break;
 		
-		case 'last30days'	:	$from = date('Y-m-d', time()-30*24*60*60);
-							$to = date('Y-m-d');
+		case 'last30days'	:	$from = '30daysAgo';
+							$to = 'today';
 							break;	
 							
-		default	:	$from = date('Y-m-d', time()-90*24*60*60);
-					$to = date('Y-m-d');
+		default	:	$from = '90daysAgo';
+					$to = 'today';
 					break;
 
 	}
@@ -484,7 +484,12 @@ function ga_dash_content() {
 	}
 
 	$metrics = 'ga:'.$query;
-	$dimensions = 'ga:year,ga:month,ga:day';
+	
+	if ($period=="today" OR $period=="yesterday"){	
+		$dimensions = 'ga:hour';
+	}else{
+		$dimensions = 'ga:year,ga:month,ga:day';
+	}	
 
 	try{
 		$serial='gadash_qr2'.str_replace(array('ga:',',','-',date('Y')),"",$projectId.$from.$to.$metrics);
@@ -499,9 +504,17 @@ function ga_dash_content() {
 			echo ga_dash_pretty_error($e);
 			return;
 	}
+	//print_r($data);
 	$ga_dash_statsdata="";
-	for ($i=0;$i<$data['totalResults'];$i++){
-		$ga_dash_statsdata.="['".$data['rows'][$i][0]."-".$data['rows'][$i][1]."-".$data['rows'][$i][2]."',".round($data['rows'][$i][3],2)."],";
+	
+	if ($period=="today" OR $period=="yesterday"){
+		for ($i=0;$i<$data['totalResults'];$i++){
+			$ga_dash_statsdata.="['".$data['rows'][$i][0].":00',".round($data['rows'][$i][1],2)."],";
+		}	
+	}else{		
+		for ($i=0;$i<$data['totalResults'];$i++){
+			$ga_dash_statsdata.="['".$data['rows'][$i][0]."-".$data['rows'][$i][1]."-".$data['rows'][$i][2]."',".round($data['rows'][$i][3],2)."],";
+		}
 	}
 	$ga_dash_statsdata=rtrim($ga_dash_statsdata,',');
 	$metrics = 'ga:visits,ga:visitors,ga:pageviews,ga:visitBounceRate,ga:organicSearches,ga:timeOnSite';
@@ -759,7 +772,7 @@ function ga_dash_content() {
 	}else{
 	
 		if (get_option('ga_dash_userapi')){	
-			$code.="<p style='padding:100px;line-height:2em;'>".__("This is a beta feature and is only available when using my Developer Key! (",'ga-dash').'<a href="http://www.deconf.com/en/projects/google-analytics-dashboard-for-wp-real-time-reports/" target="_blank">'.__("more about this feature", 'ga-dash').'</a>'.__(")", 'ga-dash')."</p>";
+			$code.="<p style='padding:100px;line-height:2em;'>".__("This is a beta feature and is only available when using my Developer Key! (",'ga-dash').'<a href="http://deconf.com/google-analytics-dashboard-real-time-reports/" target="_blank">'.__("more about this feature", 'ga-dash').'</a>'.__(")", 'ga-dash')."</p>";
 		}else{
 		
 			$code.="<table width='90%' class='realtime'>
