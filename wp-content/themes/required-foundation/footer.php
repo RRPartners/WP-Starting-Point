@@ -8,6 +8,8 @@
  * @since required+ Foundation 0.1.0
  */
 ?>
+		<div class="push"></div>
+	</div><!-- Container End -->
 		<?php
 			/*
 				A sidebar in the footer? Yep. You can can customize
@@ -16,13 +18,12 @@
 			if ( ! is_404() )
 				get_sidebar( 'footer' );
 			?>
-			<div id="footer" class="row" role="contentinfo">
+			<div id="footer" class="row footer" role="contentinfo">
 				<div class="twelve columns">
 					<hr />
 				</div>
 				<div class="four columns">
-					<?php do_action( 'required_credits' ); ?>
-					<p><a href="<?php echo esc_url( __( 'http://wordpress.org/', 'requiredfoundation' ) ); ?>" title="<?php esc_attr_e( 'Semantic Personal Publishing Platform', 'requiredfoundation' ); ?>" rel="generator"><?php printf( __( 'Proudly powered by %s', 'requiredfoundation' ), 'WordPress' ); ?></a></p>
+					footer
 				</div>
 				<div class="eight columns">
 					<?php wp_nav_menu( array(
@@ -33,7 +34,7 @@
 					) ); ?>
 				</div>
 			</div>
-	</div><!-- Container End -->
+	
 
 	<!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
 	     chromium.org/developers/how-tos/chrome-frame-getting-started -->

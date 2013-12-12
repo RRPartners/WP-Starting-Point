@@ -33,7 +33,7 @@
 </head>
 <body <?php body_class(); ?>>
 	<!-- Start the main container -->
-	<div id="container" class="container" role="document">
+	<div id="container" class="wrapper" role="document">
 
 		<!-- Row for blog navigation -->
 		<div class="row">
